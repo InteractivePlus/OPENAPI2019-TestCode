@@ -6,7 +6,15 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f
 {
+    public static $files = array (
+        '5035684ac8804dad66eaf2467955ca37' => __DIR__ . '/../..' . '/config',
+    );
+
     public static $prefixLengthsPsr4 = array (
+        'X' => 
+        array (
+            'XSYD\\Tools\\' => 11,
+        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
@@ -29,6 +37,10 @@ class ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f
     );
 
     public static $prefixDirsPsr4 = array (
+        'XSYD\\Tools\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/xsyd/tools',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
