@@ -97,11 +97,11 @@ class MySql
 
 		if( !empty( func_num_args() ) && is_array( $MySql ) ) {
 			$_Mysql = array_filter($MySql);
-			$this->$dbaddress = in_array('MySql_address', $_Mysql) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
-			$this->$dbport = in_array('MySql_port', $_Mysql) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
-			$this->$dbbase = in_array('MySql_Database', $_Mysql) ? $_Mysql['MySql_Database'] : XSYD\Config\$sql['database'];
-			$this->$dbuser = in_array('MySql_User', $_Mysql) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
-			$this->$dbpass = in_array('MySql_Password', $_Mysql) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
+			$this->$dbaddress = array_key_exists('MySql_address', $_Mysql) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
+			$this->$dbport = array_key_exists('MySql_port', $_Mysql) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
+			$this->$dbbase = array_key_exists('MySql_Database', $_Mysql) ? $_Mysql['MySql_Database'] : XSYD\Config\$sql['database'];
+			$this->$dbuser = array_key_exists('MySql_User', $_Mysql) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
+			$this->$dbpass = array_key_exists('MySql_Password', $_Mysql) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
 			$this->$dbconn = $this->_XSYDMySQLConnetor();
 
 
@@ -143,7 +143,7 @@ class MySql
    /**
    *  @version 0.1
    *
-   * @var $content_types 所有变量内容的类型
+   * @var $content_types 所有变量内容的类型(不支持mysqli函数可不填)
    * 参数类型（string/int的简写) ，如果type不填，默认string类型，如ssss，ssi等
    * @var $escape_content  查询所需要被过滤的参数，旨在预防SQL注入攻击，如无需过滤，请填写在$content里，必须为array，用法如下
    * @var $content 查询所需要的参数，必须为array，用法如下
@@ -196,16 +196,26 @@ class MySql
 
    public SQLQuery ($content_types,$content,$escape_content){
 
-   	$_ContentNum = 0;
+   	$_Content = array();
 
    	//你是不是龙鸣，脑回路有问题，参数都填错，还执行尼玛的
-   	if ( empty(func_num_args()) || func_num_args() >= 3 || strlen($content_types) > 4 || empty(strlen($content_types)) ) {
+   	if ( empty(func_num_args()) || func_num_args() > 3) {
    		return '201';
    	}
+
    
 
     //第二种
     if ( func_num_args() >1 ){
+    	if( is_array($escape_content) ){
+    	  for ($i=0; $i < strlen($escape_content); $i++) {
+    	   if (array_key_exists('content', $escape_content[$i]) ) {
+    	   	//反手来一个超级加倍
+    	   $escape_content[$i]['content']	=  $this->_real_escape( $escape_content[$i]['content'] );
+    	   }else{
+             $escape_content[$i] = $this->_real_escape( $escape_content[$i] );
+    	   }
+        }
 
         if( !is_array($content) ){
 
@@ -216,7 +226,20 @@ class MySql
     }
      
       if ($this->$is_mysqli){
-      	$this->$dbconn->prepare('SELECT ? From ? WHERE ?=?');
+
+      	if (strlen($content_types) > 4 || empty(strlen($content_types)) || strlen($content_types) == '3') return '202';
+
+      	if(strlen($content_types) == '2'){
+      		$this->$dbconn->prepare('SELECT ? From ?');
+      	}else{
+      		$this->$dbconn->prepare('SELECT ? From ? WHERE ?=?');
+      	}
+      	$this->$dbconn->bind_param(substr($content_types, $_Content['num']))
+         
+
+      	
+      }else{
+
       }
 
    }
