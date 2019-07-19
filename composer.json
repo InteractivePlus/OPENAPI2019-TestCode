@@ -4,12 +4,7 @@
         "phpmailer/phpmailer": "^6.0"
     },
     "autoload": {
-           "psr-4": {
-		   "OpenWall\\PHpass\\": "vendor/openwall",
-	           "XSYD\\Tools\\": "vendor/xsyd/tools",
-               "XSYD\\Config\\": "config",
-               "XSYD\\User\\":"vendor/xsyd/user"
-	   }
+           "classmap": [ "config","vendor/xsyd" ]
     }
 
 }
