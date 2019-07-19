@@ -13,7 +13,12 @@ class Config{
                          'user'=>'root'
                          );
 
-	public static $config_directory = dirname(__FILE__);
+	public static $config = array(
+		'dir' => dirname(__FILE__),
+		'files' => array('salt.config.php')
+	                               );
+
+
 
 }
 
