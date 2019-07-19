@@ -2,7 +2,6 @@
 
 namespace XSYD\Tools\;
 
-require XSYD\Config\$config_directory.'/salt.config.php';
 
 
 /**
@@ -71,15 +70,13 @@ class MySql
 	*/
 	private $dbaddress = 'localhost';
 
+  /**
+  *  @global is_connected
+  *  数据库是否已经连接
+  */
+  public $is_connected;
 
-	/**
-	*  @global  is_mysqli
-	*  @var bool
-	*
-	*  判断是否支持mysqli
-	*/
 
-	public $is_mysqli = class_exists('mysqli');
 	
 	function __construct(array $MySql =  array(
 		                 	'MySql_User' => '',
@@ -94,8 +91,9 @@ class MySql
 
 		//Use custom sql config if the fuction have some args
 		//Use general.config.php sql config if no
-
-		if( !empty( func_num_args() ) && is_array( $MySql ) ) {
+  if( (!$this->$is_connected && !isset($this->$dbconn) && $this->$dbconn) || !is_object($this->$dbconn) ){
+    
+	  if( !empty( func_num_args() ) && is_array( $MySql ) ) {
 			$_Mysql = array_filter($MySql);
 			$this->$dbaddress = array_key_exists('MySql_address', $_Mysql) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
 			$this->$dbport = array_key_exists('MySql_port', $_Mysql) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
@@ -103,19 +101,16 @@ class MySql
 			$this->$dbuser = array_key_exists('MySql_User', $_Mysql) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
 			$this->$dbpass = array_key_exists('MySql_Password', $_Mysql) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
 			$this->$dbconn = $this->_XSYDMySQLConnetor();
-
-
-
-           
-		}else{
-			  $this->$dbaddress = XSYD\Config\$sql['address'];
-              $this->$dbport = XSYD\Config\$sql['port'];
-              $this->$dbbase = XSYD\Config\$sql['database'];
-              $this->$dbpass = XSYD\Config\$sql['password'];
-              $this->$dbuser = XSYD\Config\$sql['user'];
-              $this->$dbconn = $this->_XSYDMySQLConnetor();
+    }else{
+			$this->$dbaddress = XSYD\Config\$sql['address'];
+      $this->$dbport = XSYD\Config\$sql['port'];
+      $this->$dbbase = XSYD\Config\$sql['database'];
+      $this->$dbpass = XSYD\Config\$sql['password'];
+      $this->$dbuser = XSYD\Config\$sql['user'];
+      $this->$dbconn = $this->_XSYDMySQLConnetor();
 		}
 
+  }
           
 	
 	}
@@ -125,19 +120,27 @@ class MySql
 
        //Please Attention!
 	   //The return of mysqli will be a class object!
-		return $this->$is_mysqli ? call_user_func(funtion() {
+		return call_user_func(funtion() {
 			$_mysqli = new mysqli($this->$dbaddress,$this->$dbuser,$this->$dbpass,$this->$dbbase);
 			if ( mysqli_connect_errno() ) return mysqli_connect_errno();
+      $this->$is_connected = true;
 			return $_mysqli;
-		}) : call_user_func(funtion() {
-			$_mysql = mysql_connect($this->$dbaddress,$this->$dbuser,$this->$dbpass,$this->$dbbase);
-			if ( !$_mysql ) return mysql_error();
-			return $_mysql;
 		});
 	}
 
+  public _XSYDMySQLClose(){
+    
+     if ( $this->$dbconn->close() ){
+      $this->$is_connected = false;
+      unset($this->$dbconn);
+     }else{
+      return '202';
+     }
+
+  }
+
    
-   public SQL(string $sql,array $content,array $escape_content){
+   public SQL(string $sql,array $content){
 
    }
    /**
@@ -194,12 +197,12 @@ class MySql
    *
    */
 
-   public SQLQuery ($content_types,$content,$escape_content){
+   public SQLQuery ($content_types,$content){
 
    	$_Content = array();
 
    	//你是不是龙鸣，脑回路有问题，参数都填错，还执行尼玛的
-   	if ( empty(func_num_args()) || func_num_args() > 3) {
+   	if ( empty(func_num_args()) || func_num_args() > 2) {
    		return '201';
    	}
 
@@ -278,14 +281,8 @@ class MySql
 	 * @return string escaped
 	 */
 	public function _real_escape( $string ) {
-		
-			if ( $this->is_mysqli() ) {
-				$escaped = mysqli_real_escape_string( $this->dbconn, $string );
-			} else {
-				$escaped = mysql_real_escape_string( $string, $this->dbconn );
-			}
-
-			$escaped = addslashes( $string );
+		    $escaped = mysqli_real_escape_string( $this->$dbconn, $string );
+		  	$escaped = addslashes( $string );
 		return $this->add_placeholder_escape( $escaped );
 	}
 
