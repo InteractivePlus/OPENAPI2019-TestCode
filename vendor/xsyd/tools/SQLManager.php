@@ -94,12 +94,14 @@ class MySql
   if( (!$this->$is_connected && !isset($this->$dbconn) && $this->$dbconn) || !is_object($this->$dbconn) ){
     
 	  if( !empty( func_num_args() ) && is_array( $MySql ) ) {
+
+      //请不要删除isset，此目的是为了提高抗压性，因为array_key_exists效率低下
 			$_Mysql = array_filter($MySql);
-			$this->$dbaddress = array_key_exists('MySql_address', $_Mysql) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
-			$this->$dbport = array_key_exists('MySql_port', $_Mysql) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
-			$this->$dbbase = array_key_exists('MySql_Database', $_Mysql) ? $_Mysql['MySql_Database'] : XSYD\Config\$sql['database'];
-			$this->$dbuser = array_key_exists('MySql_User', $_Mysql) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
-			$this->$dbpass = array_key_exists('MySql_Password', $_Mysql) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
+			$this->$dbaddress = ( isset($_Mysql['MySql_address']) || array_key_exists('MySql_address', $_Mysql) ) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
+			$this->$dbport =  ( isset($_Mysql['MySql_port']) || array_key_exists('MySql_port', $_Mysql) ) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
+			$this->$dbbase =  ( isset($_Mysql['MySql_Database']) || array_key_exists('MySql_Database', $_Mysql) ) ? $_Mysql['MySql_Database'] : XSYD\Config\$sql['database'];
+			$this->$dbuser =  ( isset($_Mysql['MySql_User']) || array_key_exists('MySql_User', $_Mysql) ) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
+			$this->$dbpass =  ( isset($_Mysql['MySql_Password']) || array_key_exists('MySql_Password', $_Mysql) ) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
 			$this->$dbconn = $this->_XSYDMySQLConnetor();
     }else{
 			$this->$dbaddress = XSYD\Config\$sql['address'];
@@ -115,57 +117,101 @@ class MySql
 	
 	}
 
-	public _XSYDMySQLConnetor(){
+	public function _XSYDMySQLConnetor(){
 
 
        //Please Attention!
 	   //The return of mysqli will be a class object!
-		return call_user_func(funtion() {
-			$_mysqli = new mysqli($this->$dbaddress,$this->$dbuser,$this->$dbpass,$this->$dbbase);
-			if ( mysqli_connect_errno() ) return mysqli_connect_errno();
+      $_mysqli = new mysqli($this->$dbaddress,$this->$dbuser,$this->$dbpass,$this->$dbbase);
+      if ( mysqli_connect_errno() ) return mysqli_connect_errno();
       $this->$is_connected = true;
-			return $_mysqli;
-		});
+      $this->_XSYDInitCharset();
+      return $_mysqli;
+	
 	}
 
-  public _XSYDMySQLClose(){
+  public function _XSYDMySQLClose() : bool{
     
      if ( $this->$dbconn->close() ){
       $this->$is_connected = false;
-      unset($this->$dbconn);
+      $this->$dbconn = null;
+      return true;
      }else{
-      return '202';
+      return false;
      }
 
   }
 
-   
-   public SQL(string $sql,array $content){
+  /**
+  * @version 0.1
+  * 用于初始化数据库Charset，默认utf8，可在general.config.php文件更改
+  *
+  *
+  */
 
-   }
+  public  function _XSYDInitCharset() : bool{
+    //默认编码utf8_general_ci
+    $_Charset = 'utf8_general_ci';
+
+    if( 'utf8' !== XSYD\Config\$sql['charset']){
+       $_Charset = XSYD\Config\$sql['charset'];
+    }else{
+
+    /**
+    * 用于检测utf8mb4是否可用(部分源码来源于Wordpress)
+    * @see wpdb::has_cap()
+    * @link https://github.com/WordPress/WordPress/blob/master/wp-includes/wp-db.php
+    */
+      
+      if( version_compare( $this->_XSYDGetSQLVersion() , '5.6', '>=' ) )
+      {
+        $_Charset = 'utf8mb4_unicode_520_ci';
+     }else{
+      $client_version = mysqli_get_client_info();
+      if ( false !== strpos( $client_version, 'mysqlnd' ) ) {
+          $client_version = preg_replace( '/^\D+([\d.]+).*/', '$1', $client_version );
+          if( version_compare( $client_version, '5.0.9', '>=' ) ){
+            $_Charset = 'utf8mb4_unicode_ci';
+          }
+        } else {
+          if( version_compare( $client_version, '5.5.3', '>=' ) ){
+             $_Charset = 'utf8mb4_unicode_ci';
+          }
+        }
+    }
+  }
+  
+   return $this->$dbconn->set_charset( $_Charset );    
+  }
+
+    /**
+    * 用于获取MySQL版本(部分源码来源于Wordpress)
+    * @see wpdb::db_version()
+    * @link https://github.com/WordPress/WordPress/blob/master/wp-includes/wp-db.php
+    */
+
+  public function _XSYDGetSQLVersion(){
+    return preg_replace( '/[^0-9.].*/', '' ,$this->$dbconn->server_info);
+  }
+
+   
    /**
    *  @version 0.1
    *
-   * @var $content_types 所有变量内容的类型(不支持mysqli函数可不填)
+   * @var $content_types 所有变量内容的类型(不填默认ssss即全为字符串)
    * 参数类型（string/int的简写) ，如果type不填，默认string类型，如ssss，ssi等
-   * @var $escape_content  查询所需要被过滤的参数，旨在预防SQL注入攻击，如无需过滤，请填写在$content里，必须为array，用法如下
    * @var $content 查询所需要的参数，必须为array，用法如下
    *
-   *  第一种，array用法，自定义性强
    * 
+   * 绑定函数默认顺序为从左到右，因本人太懒，暂时调不了顺序（谁会需要呢
+   * 注 意：escaped为是否过滤，若不填，默认为true，旨在防止SQL注入攻击，过滤会导致部分字符无法正常显示！！
+   * false关闭字符过滤
+   * 如果escaped都不填，可用第二种格式
    * @uses $content = array(
-   *                        array('content'=>'xxxxxxx'，'usage'=>'column/table/name/value'),
+   *                        array('content'=>'xxxxxxx'，'escaped'=>'false'),
    *                        array('content'=>'xxx'),
    *                         ....
    *                        )
-   * @uses $content内的参数中有四个array值，分别是，content*，查询内容，（多个请用英文,连接），usage，他的作用，（有四个用法可选
-   * 分别是，选取的column，选取的table，查找的名称（WHERE xx中xx），查找名称的值（WHERE xx = yy中yy））
-   *
-   * 注：*为必填
-   * 如果usage不填，将默认使用column，table，xx，yy的顺序
-   * 
-   *
-   * @uses The usage of $escape_content is the same as $content 
    *
    *
    * 字符类型简写如下： 
@@ -175,19 +221,9 @@ class MySql
    * b = blob
    * 必须为简写，否则无法执行
    *
+   * 第二种，只有一个函数变量值
    *
-   *
-   *  第二种，一string，
-   *  此类型使用于当$content或$escape_content内容偏少时。
-   *
-   * @uses 例如$content只有一个，$escape_content有三个，$content可直接填写字符串内容，但$escape_content必须为array
-   * @uses array格式为SQLQuery('xx',array('xxx','xxx','xxx'))，array亦可采用第一种格式
-   *
-   *
-   * 第三种，只有一个函数变量值
-   *
-   * @uses 当函数变量只有一个，只需填写一个即可，默认认为他是$escape_content
-   * @uses array格式为array('xxx','xxx','xxx')，array亦可采用第一种格式
+   * @uses array格式为array('xxx','xxx','xxx')，array亦可采用第一种格式，默认所有内容都要被过滤！！！
    *
    *
    * @return The Sql Query Result(Success) Otherwise,it will return the error codes.
@@ -197,63 +233,74 @@ class MySql
    *
    */
 
-   public SQLQuery ($content_types,$content){
+   public function SQL($sql,$content_types,$content){
 
-   	$_Content = array();
+    $_Args = true;
+    $_Array = array();
+    $_SQL = null;
+    $_Result = null;
+
 
    	//你是不是龙鸣，脑回路有问题，参数都填错，还执行尼玛的
-   	if ( empty(func_num_args()) || func_num_args() > 2) {
+   	if ( empty(func_num_args()) || func_num_args() > 3) {
    		return '201';
    	}
 
-   
-
-    //第二种
-    if ( func_num_args() >1 ){
-    	if( is_array($escape_content) ){
-    	  for ($i=0; $i < strlen($escape_content); $i++) {
-    	   if (array_key_exists('content', $escape_content[$i]) ) {
-    	   	//反手来一个超级加倍
-    	   $escape_content[$i]['content']	=  $this->_real_escape( $escape_content[$i]['content'] );
-    	   }else{
-             $escape_content[$i] = $this->_real_escape( $escape_content[$i] );
-    	   }
+    //第一种
+    	if( func_num_args() == '3' ){
+        if( !is_string($content_types) || strlen($content_types) != strlen($content)){
+          return '202';
         }
-
-        if( !is_array($content) ){
-
-        }
-        if( !is_array($escape_content) )
-    }else{
-
-    }
-     
-      if ($this->$is_mysqli){
-
-      	if (strlen($content_types) > 4 || empty(strlen($content_types)) || strlen($content_types) == '3') return '202';
-
-      	if(strlen($content_types) == '2'){
-      		$this->$dbconn->prepare('SELECT ? From ?');
-      	}else{
-      		$this->$dbconn->prepare('SELECT ? From ? WHERE ?=?');
-      	}
-      	$this->$dbconn->bind_param(substr($content_types, $_Content['num']))
-         
-
-      	
       }else{
-
+        $content = func_get_arg( 1 );
+        $_Args = false;
+        if( !is_array($content) ) return '202';
       }
 
+    	  for ($i=0; $i < strlen($content); $i++) {
+          if( !$_Args ){
+            $content_types .= 's';
+          }
+    	   if ( isset($content[$i]['content']) || array_key_exists('content', $content[$i]) ) {
+    	   	//反手来一个超级加倍
+    	    if( ( !isset($content[$i]['escaped']) || !array_key_exists('escaped', $content[$i]) ) || true === $content[$i]['escaped'] )
+            {
+              $content[$i]['content']	=  $this->_real_escape( $content[$i]['content'] );
+              unset($content[$i]['escaped']);
+            }
+             array_push($_Array, $content[$i]['content']);
+    	   }else{
+            if( is_array($content[$i]) ) return '202';
+             $content[$i] = $this->_real_escape( $content[$i] );
+             array_push($_Array, $content[$i]);
+    	   }
+
+        }
+
+        if( substr_count($sql, '?') != strlen($content)) return '202';       
+     
+        $_SQL = $this->$dbconn->prepare($sql);
+       
+        $ref = new ReflectionClass('mysqli_stmt');
+        $ref->getMethod('bind_param')->invokeArgs($_SQL, array_merge((array)$content_types,$_Array));
+      	$_SQL->execute();
+        //暂时不能选择返回有无键值array（因为懒
+        $_Result = $_SQL->get_result()->fetch_now();
+
+        return isset( $_Result ) ? '199' : $_Result;
+         
+
+
+
    }
 
-   public SQLInsert(array $content,array $escape_content) : bool{
+   public function SQLInsert(array $content,array $escape_content) : bool{
 
    }
-   public SQLUpdate(array $content,array $escape_content) : bool{
+   public function SQLUpdate(array $content,array $escape_content) : bool{
    	
    }
-    public SQLDelete(array $content,array $escape_content) : bool{
+    public function SQLDelete(array $content,array $escape_content) : bool{
    	
    }
 
