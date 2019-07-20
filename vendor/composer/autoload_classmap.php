@@ -6,4 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'General' => $vendorDir . '/xsyd/tools/General.php',
+    'MySql' => $vendorDir . '/xsyd/tools/SQLManager.php',
+    'XSYD\\Config' => $baseDir . '/config/general.config.php',
 );

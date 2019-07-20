@@ -6,23 +6,11 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f
 {
-    public static $files = array (
-        '5035684ac8804dad66eaf2467955ca37' => __DIR__ . '/../..' . '/config',
-    );
-
     public static $prefixLengthsPsr4 = array (
-        'X' => 
-        array (
-            'XSYD\\Tools\\' => 11,
-        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
             'PHPMailer\\PHPMailer\\' => 20,
-        ),
-        'O' => 
-        array (
-            'OpenWall\\PHpass\\' => 16,
         ),
         'L' => 
         array (
@@ -37,10 +25,6 @@ class ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f
     );
 
     public static $prefixDirsPsr4 = array (
-        'XSYD\\Tools\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/xsyd/tools',
-        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
@@ -48,10 +32,6 @@ class ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
-        ),
-        'OpenWall\\PHpass\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/openwall',
         ),
         'League\\OAuth2\\Server\\' => 
         array (
@@ -71,11 +51,18 @@ class ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f
         ),
     );
 
+    public static $classMap = array (
+        'General' => __DIR__ . '/..' . '/xsyd/tools/General.php',
+        'MySql' => __DIR__ . '/..' . '/xsyd/tools/SQLManager.php',
+        'XSYD\\Config' => __DIR__ . '/../..' . '/config/general.config.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit73bc68337bc44d3861da9d5b8896e24f::$classMap;
 
         }, null, ClassLoader::class);
     }
