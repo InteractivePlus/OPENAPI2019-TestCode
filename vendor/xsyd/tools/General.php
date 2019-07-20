@@ -1,5 +1,5 @@
 <?php
-namespace XSYD\Tools\;
+namespace Tools\;
 
 
 /**
