@@ -38,7 +38,7 @@ class MySql
 	*  数据库连接
 	*/
     
-    public $dbconn;
+  public $dbconn;
 	/**
 	* @global dbuser
 	*  数据库需要连接的用户
@@ -81,71 +81,71 @@ class MySql
 	function __construct(array $MySql =  array(
 		                 	'MySql_User' => '',
 		                 	'MySql_Password'=> '',
-                            'MySql_Database'=>'',
-                            'MySql_port'=>'',
-                            'MySql_address'=> ''
-		                 )
+                      'MySql_Database'=>'',
+                      'MySql_port'=>'',
+                      'MySql_address'=> ''
+		                                        )
                       
-                        )
+                     )
 	{
 
 		//Use custom sql config if the fuction have some args
 		//Use general.config.php sql config if no
-  if( (!$this->$is_connected && !isset($this->$dbconn) && $this->$dbconn) || !is_object($this->$dbconn) ){
-    
-	  if( !empty( func_num_args() ) && is_array( $MySql ) ) {
-
-      //请不要删除isset，此目的是为了提高抗压性，因为array_key_exists效率低下
-			$_Mysql = array_filter($MySql);
-			$this->$dbaddress = ( isset($_Mysql['MySql_address']) || array_key_exists('MySql_address', $_Mysql) ) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
-			$this->$dbport =  ( isset($_Mysql['MySql_port']) || array_key_exists('MySql_port', $_Mysql) ) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
-			$this->$dbbase =  ( isset($_Mysql['MySql_Database']) || array_key_exists('MySql_Database', $_Mysql) ) ? $_Mysql['MySql_Database'] : XSYD\Config\$sql['database'];
-			$this->$dbuser =  ( isset($_Mysql['MySql_User']) || array_key_exists('MySql_User', $_Mysql) ) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
-			$this->$dbpass =  ( isset($_Mysql['MySql_Password']) || array_key_exists('MySql_Password', $_Mysql) ) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
-			$this->$dbconn = $this->_XSYDMySQLConnetor();
-    }else{
-			$this->$dbaddress = XSYD\Config\$sql['address'];
-      $this->$dbport = XSYD\Config\$sql['port'];
-      $this->$dbbase = XSYD\Config\$sql['database'];
-      $this->$dbpass = XSYD\Config\$sql['password'];
-      $this->$dbuser = XSYD\Config\$sql['user'];
-      $this->$dbconn = $this->_XSYDMySQLConnetor();
-		}
-
-  }
-          
-	
-	}
+      if( (!$this->$is_connected && !isset($this->$dbconn) && $this->$dbconn) || !is_object($this->$dbconn) ){
+        if( !empty( func_num_args() ) && is_array( $MySql ) ) {
+          //请不要删除isset，此目的是为了提高抗压性，因为array_key_exists效率低下
+          $_Mysql = array_filter($MySql);
+			    $this->$dbaddress = ( isset($_Mysql['MySql_address']) || array_key_exists('MySql_address', $_Mysql) ) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
+			    $this->$dbport =  ( isset($_Mysql['MySql_port']) || array_key_exists('MySql_port', $_Mysql) ) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
+			    $this->$dbbase =  ( isset($_Mysql['MySql_Database']) || array_key_exists('MySql_Database', $_Mysql) ) ? $_Mysql['MySql_Database'] : XSYD\Config\$sql['database'];
+			    $this->$dbuser =  ( isset($_Mysql['MySql_User']) || array_key_exists('MySql_User', $_Mysql) ) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
+			    $this->$dbpass =  ( isset($_Mysql['MySql_Password']) || array_key_exists('MySql_Password', $_Mysql) ) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
+			    $this->$dbconn = $this->_XSYDMySQLConnetor();
+        }else{
+			    $this->$dbaddress = XSYD\Config\$sql['address'];
+          $this->$dbport = XSYD\Config\$sql['port'];
+          $this->$dbbase = XSYD\Config\$sql['database'];
+          $this->$dbpass = XSYD\Config\$sql['password'];
+          $this->$dbuser = XSYD\Config\$sql['user'];
+          $this->$dbconn = $this->_XSYDMySQLConnetor();
+		    }
+      }
+    }
 
 	public function _XSYDMySQLConnetor(){
-
-
-       //Please Attention!
+     //Please Attention!
 	   //The return of mysqli will be a class object!
       $_mysqli = new mysqli($this->$dbaddress,$this->$dbuser,$this->$dbpass,$this->$dbbase);
       if ( mysqli_connect_errno() ) return mysqli_connect_errno();
       $this->$is_connected = true;
       $this->_XSYDInitCharset();
-      return $_mysqli;
-	
-	}
+      return $_mysqli;	
+	 }
 
-  public function _XSYDMySQLClose() : bool{
-    
-     if ( $this->$dbconn->close() ){
-      $this->$is_connected = false;
-      $this->$dbconn = null;
-      return true;
-     }else{
-      return false;
-     }
+/**
+* 关闭数据库
+* @uses $SQL = XSYD\MySql();
+* @uses @SQL->_Close();
+* 不用数据库请关闭
+*
+*/
+  public function _Close() : bool{
+      if ( $this->$dbconn->close() ){
+        $this->$is_connected = false;
+        $this->$dbconn = null;
+        return true;
+      }else{
+        return false;
+      }
 
   }
 
   /**
   * @version 0.1
   * 用于初始化数据库Charset，默认utf8，可在general.config.php文件更改
-  *
+  * @uses $SQL = XSYD\MySql();
+  * @uses @SQL->_XSYDInitCharset();
+  * 
   *
   */
 
@@ -188,6 +188,8 @@ class MySql
     * 用于获取MySQL版本(部分源码来源于Wordpress)
     * @see wpdb::db_version()
     * @link https://github.com/WordPress/WordPress/blob/master/wp-includes/wp-db.php
+    * @uses $SQL = XSYD\MySql();
+    * @uses @SQL->_XSYDGetSQLVersion();
     */
 
   public function _XSYDGetSQLVersion(){
@@ -248,7 +250,7 @@ class MySql
 
     //第一种
     	if( func_num_args() == '3' ){
-        if( !is_string($content_types) || strlen($content_types) != strlen($content)){
+        if( !is_string($content_types) || strlen($content_types) != count($content)){
           return '202';
         }
       }else{
@@ -257,7 +259,7 @@ class MySql
         if( !is_array($content) ) return '202';
       }
 
-    	  for ($i=0; $i < strlen($content); $i++) {
+    	  for ($i=0; $i < count($content); $i++) {
           if( !$_Args ){
             $content_types .= 's';
           }
@@ -266,44 +268,236 @@ class MySql
     	    if( ( !isset($content[$i]['escaped']) || !array_key_exists('escaped', $content[$i]) ) || true === $content[$i]['escaped'] )
             {
               $content[$i]['content']	=  $this->_real_escape( $content[$i]['content'] );
-              unset($content[$i]['escaped']);
+              if( isset($content[$i]['escaped']) || array_key_exists('escaped', $content[$i]) ) ) unset($content[$i]['escaped']);
             }
              array_push($_Array, $content[$i]['content']);
     	   }else{
-            if( is_array($content[$i]) ) return '202';
+          //当只填写array('龙鸣','WDNMD')时
              $content[$i] = $this->_real_escape( $content[$i] );
              array_push($_Array, $content[$i]);
     	   }
 
         }
 
-        if( substr_count($sql, '?') != strlen($content)) return '202';       
+        if( substr_count($sql, '?') != count($content) ) return '202';       
      
         $_SQL = $this->$dbconn->prepare($sql);
        
         $ref = new ReflectionClass('mysqli_stmt');
-        $ref->getMethod('bind_param')->invokeArgs($_SQL, array_merge((array)$content_types,$_Array));
+        $ref->getMethod('bind_param')->invokeArgs($_SQL, array_merge( (array)$content_types,$_Array) );
       	$_SQL->execute();
+
         //暂时不能选择返回有无键值array（因为懒
         $_Result = $_SQL->get_result()->fetch_now();
-
-        return isset( $_Result ) ? '199' : $_Result;
+        $_SQL->free_result();
+        return !isset( $_Result ) ? '199' : $_Result;
          
 
 
 
    }
 
-   public function SQLInsert(array $content,array $escape_content) : bool{
+  /**
+   * 数据库获得数据
+   *
+   * @param $table string，需要获取数据的table
+   * @param $col string/array,需要获取数据的col，多个请用array，一个无需用array，不填默认获取全部（需要留空）
+   * @param $where array，Where条件，（格式array('xxxname'  => 'values'))
+   * @param $order array，Order条件，多个请用array，一个无需用array
+   * @param $length int，限制获取数据长度，不填默认不限制（无需留空）
+   * @param $offset int，偏移值，不填默认不偏移（无需留空）
+   * @return string 返回值 或者 boolean false
+   * @uses $SQL = XSYD\MySql();
+   * @uses @SQL->SQLGetRows();
+   */
+
+   public function SQLGetRows(string $table,$col=null,$where=null,$order=null,int $length=-1,int $offset=0){
+      $_Args[]  = $table;
+      $_Cols    = isset($col) ? '?' : '*';
+      $_Result  = null;
+
+      if( isset($col) ){
+        if ( is_array($col) ){
+          foreach ($col as $_value) { 
+            array_push($_Args,$_value);
+            if( count($data) > 1) $_Cols .= ',?';
+          }
+        }else{
+            array_push($_Args, $col);
+        }
+      }
+
+      $_SQL   = "SELECT $_Cols From ? ";
+      $_Cols  = null;
+
+      if ( !empty($where) ){
+        $_Conditions = '?=?';
+        foreach ($where as $_key => $_value) {
+          array_push($_Args ,$_key,$_value);
+          if( count($where) > 1) $_Conditions .= ' AND ?=?';
+        }
+        $_SQL .= 'WHERE '.$_Conditions;
+        unset($_Conditions);
+      }
+
+      if( isset($order) ){
+        if ( is_array($order) ){
+          foreach ($order as $_value) { 
+            array_push($_Args,$_value);
+            if( count($data) > 1) $_Cols .= ',?';
+          }
+        }else{
+            array_push($_Args, $order);
+        }
+
+        $_SQL  .= " ORDER BY $_Cols";
+      }
+
+      if ( '1' != $length){
+        $_SQL .= " LIMIT ?";
+        array_push($_Args, $length);
+      }
+
+      if ( $offset > 0){
+        $_SQL .= " OFFEST ?";
+        array_push($_Args, $offset);
+      }
+
+      $_Result = $this->SQL($_SQL , $_Args);
+
+      return ( '199' !== $_Result) ? $_Result : false;
+
+
 
    }
-   public function SQLUpdate(array $content,array $escape_content) : bool{
-   	
+
+   /**
+   * 数据库Insert功能
+   *
+   * @param $table string，需要插入数据的table
+   * @param $col string/array,需要插入数据的col，多个请用array，一个无需用array
+   * @param $data string/array，需要插入的数据，多个请用array，一个无需用array
+   * @return boolean true 或者 false
+   * @uses $SQL = XSYD\MySql();
+   * @uses @SQL->SQLInsert();
+   */
+
+   public function SQLInsert(string $table,$col,$data) : bool{
+      $_Cols    = '?';
+      $_SQL     = 'INSERT INTO ?';
+      $_Args[]  = $table;
+
+      if( is_array($col) ){
+        foreach ($col as $_value) { 
+          array_push($_Args,$_value);
+          if( count($data) > 1) $_Cols .= ',?';
+        }
+      }else{
+        array_push($_Args, $col);
+      }
+
+      $_SQL .= "($_Cols)";
+   
+      if( is_array($data) ){
+        foreach ($data as $_value) { 
+          array_push($_Args, $_value);
+          if( count($data) > 1) $_SetArgs .= ',?';
+        }
+      }else{
+        array_push($_Args, $data);
+      }
+
+      $_SQL .= " VALUES($_SetArgs)";
+
+      $_Result = $this->SQL($_SQL,$_Args);
+      return ( '199' !== $_Result) ? true : false;
+
+
    }
-    public function SQLDelete(array $content,array $escape_content) : bool{
+
+   /**
+   * 数据库Update功能
+   *
+   * @param $table string，需要插入数据的table
+   * @param $data array,需要更新的数据（格式array('xxxname'  => 'values'))
+   * @param $data array，条件，（格式array('xxxname'  => 'values'))
+   * @return boolean true 或者 false
+   * @uses $SQL = XSYD\MySql();
+   * @uses @SQL->SQLUpdate();
+   * @return boolean true/false
+   */
+
+   public function SQLUpdate(string $table,array $data,array $where) : bool{
+      $_Conditions = null;
+      $_SQL        = null;
+      $_Args[]     = $table;
+      $_SetArgs    = '?=?';
+        
+      foreach ($data as $_key => $_value) { 
+        array_push($_Args, $_key,$_value);
+        if( count($data) > 1) $_SetArgs .= ',?';
+      }
+
+      $_SQL = 'UPDATE ? SET '.$_SetArgs;
+
+   	  if ( !empty($where) ){
+        $_Conditions = '?=?';
+        foreach ($where as $_key => $_value) {
+          array_push($_Args ,$_key,$_value);
+          if( count($where) > 1) $_Conditions .= ' AND ?=?';
+        }
+        $_SQL .= 'WHERE '.$_Conditions;
+      }
+
+      $_Result = $this->SQL($_SQL,$_Args);
+      return ( '199' !== $_Result) ? true : false;
+   }
+
+   /**
+   *
+   * 删除指定table
+   * @param $table
+   * @uses $SQL = XSYD\MySql();
+   * @uses @SQL->SQLDropTable();
+   * @return boolean true/false
+   **/
+   public function SQLDropTable(string $table) : bool{
+      $_Args[] = $table;
+      return ('199' !== $this->SQL('DROP TABLE IF EXISTS ?',$_Args)) ? true : false;
    	
    }
 
+
+   /**
+   * 数据库删除指定table
+   *
+   * @param $table string，需要删除数据的table
+   * @param $where array,需要更新的数据（格式array('xxxname'  => 'values'))
+   * @return boolean true 或者 false
+   * @uses $SQL = XSYD\MySql();
+   * @uses @SQL->SQLDeleteRows();
+   * @return boolean true/false
+   */
+
+   public function SQLDeleteRows(string $table,array $where) : bool{
+      $_Args[]     = $table;
+      $_Conditions = null;
+      $_SQL        = 'DELETE FROM ?';
+
+      if (!empty($where)) {
+        $_Conditions = '?=?';
+        foreach ($where as $_key => $_value) {
+          array_push($_Args ,$_key,$_value);
+          if( count($where) > 1) $_Conditions .= ' AND ?=?';
+        }
+        $_SQL .= ' WHERE '.$_Conditions;
+      }
+
+      $_Result = $this->SQL($_SQL,$_Args);
+      return ( '199' !== $_Result) ? true : false;
+
+
+   }
 
 
 
