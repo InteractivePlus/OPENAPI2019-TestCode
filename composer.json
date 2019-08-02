@@ -4,10 +4,12 @@
         "phpmailer/phpmailer": "^6.0"
     },
     "autoload": {
-           "classmap": [ "config" ]
-    },
-    "require":{
-        "xsyd/tools":""
+           "classmap": ["config/"],
+           "psr-4": {
+                "XSYD\\": "vendor/xsyd/tools/",
+                "XSYD\\User\\":"vendor/xsyd/user/"
+            }
     }
+
 
 }
