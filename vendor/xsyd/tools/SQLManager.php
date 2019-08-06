@@ -153,8 +153,8 @@ class MySql
     //默认编码utf8_general_ci
     $_Charset = 'utf8_general_ci';
 
-    if( 'utf8' !== XSYD\Config\$sql['charset']){
-       $_Charset = XSYD\Config\$sql['charset'];
+    if( 'utf8' !== XSYD_DB_CHARSET){
+       $_Charset = XSYD_DB_CHARSET;
     }else{
 
     /**
