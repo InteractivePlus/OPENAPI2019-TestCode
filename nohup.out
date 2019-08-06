@@ -1,0 +1,26 @@
+INFO: loading config from /etc/shadowsocks.json
+2019-07-20 17:10:23 INFO     loading libcrypto from libcrypto.so.10
+2019-07-20 17:10:23 INFO     starting local at 127.0.0.1:1080
+2019-07-20 17:11:12 INFO     connecting github.com:443 from 127.0.0.1:46253
+2019-07-20 17:11:15 INFO     connecting github.com:443 from 127.0.0.1:46259
+2019-08-01 17:51:25 INFO     connecting github.com:443 from 127.0.0.1:46323
+2019-08-01 17:51:51 INFO     connecting github.com:443 from 127.0.0.1:46329
+2019-08-01 17:51:53 INFO     connecting github.com:443 from 127.0.0.1:46335
+2019-08-02 07:14:50 INFO     connecting github.com:443 from 127.0.0.1:46341
+2019-08-02 07:15:14 INFO     connecting github.com:443 from 127.0.0.1:46347
+2019-08-02 07:15:15 INFO     connecting github.com:443 from 127.0.0.1:46353
+2019-08-02 07:15:36 INFO     connecting github.com:443 from 127.0.0.1:46359
+2019-08-02 07:29:53 INFO     connecting github.com:443 from 127.0.0.1:46365
+2019-08-03 16:07:47 INFO     connecting github.com:443 from 127.0.0.1:46371
+2019-08-03 16:09:22 INFO     connecting github.com:443 from 127.0.0.1:46377
+2019-08-03 16:12:29 INFO     connecting github.com:443 from 127.0.0.1:46383
+2019-08-03 16:12:31 INFO     connecting github.com:443 from 127.0.0.1:46389
+2019-08-06 15:27:11 INFO     connecting github.com:443 from 127.0.0.1:46395
+2019-08-06 15:27:12 INFO     connecting github.com:443 from 127.0.0.1:46401
+2019-08-06 17:04:16 INFO     connecting github.com:443 from 127.0.0.1:46413
+2019-08-06 17:04:18 INFO     connecting github.com:443 from 127.0.0.1:46419
+2019-08-06 17:07:22 INFO     connecting github.com:443 from 127.0.0.1:46425
+2019-08-06 17:07:38 INFO     connecting github.com:443 from 127.0.0.1:46431
+2019-08-06 17:07:39 INFO     connecting github.com:443 from 127.0.0.1:46437
+2019-08-06 17:10:34 INFO     connecting github.com:443 from 127.0.0.1:46443
+2019-08-06 17:10:36 INFO     connecting github.com:443 from 127.0.0.1:46449
