@@ -18,10 +18,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/general.config.php';
 
 if ( !file_exists( XSYD_CONFIG_PATH.'/salt.config.php') ){
-   $_Content = '<?php 
-   '.file_get_contents('https://api.wordpress.org/secret-key/1.1/salt/');
+   $_Salt = \XSYD\Password\SecureRandom::GenSalt();
+   $_Content = <<<EOF 
+				<?php
+				define('AUTH_SALT',$_Salt);
+				?>
+  				  EOF;
    file_put_contents( XSYD_CONFIG_PATH.'/salt.config.php', $_Content);
-   unset($_Content);
+   unset($_Content,$_Salt);
 }
 
 foreach ( $_Files as  $_IncludeConfigFiles ) {

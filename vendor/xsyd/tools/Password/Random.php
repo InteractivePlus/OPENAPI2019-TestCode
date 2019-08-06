@@ -4,9 +4,9 @@ namespace XSYD\Password;
 /**
 * @version 0.1
 * @author GHL(LiuXing)
-* @uses XSYD\Password::GenSalt();
+* @uses XSYD\Password\SecureRandom::GenSalt();
 */
-class SecureRamdom
+class SecureRandom
 {
 	
 	public static function R($bytes=8)
