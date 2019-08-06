@@ -1,6 +1,6 @@
 <?php
 
-namespace XSYD;
+namespace XSYD\DB;
 
 
 
