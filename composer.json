@@ -6,8 +6,7 @@
     "autoload": {
            "psr-4": {
                 "XSYD\\": "vendor/xsyd/tools/",
-                "XSYD\\User\\":"vendor/xsyd/user/",
-                "XSYD\\Config\\":"config/"
+                "XSYD\\User\\":"vendor/xsyd/user/"
             }
     }
 
