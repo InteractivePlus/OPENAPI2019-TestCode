@@ -54,7 +54,7 @@ class SecureRamdom
 		# has the 4 unused bits set to non-zero, we do not want to take
 		# chances and we also do not want to waste an additional byte
 		# of entropy.
-		$itoa64 = '!$%@?./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		$itoa64 = '!$%#@?./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 		$output = '';
 
 		$i = 0;
