@@ -19,7 +19,7 @@ require __DIR__ . '/config/general.config.php';
 
 if ( !file_exists( XSYD_CONFIG_PATH.'/salt.config.php') ){
    $_Salt = \XSYD\Password\SecureRandom::GenSalt();
-   $_Content = <<<EOF 
+   $_Content = <<<EOF
 				<?php
 				define('AUTH_SALT',$_Salt);
 				?>
