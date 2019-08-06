@@ -23,7 +23,7 @@ if ( !file_exists( XSYD_CONFIG_PATH.'/salt.config.php') ){
 				<?php
 				define('AUTH_SALT',$_Salt);
 				?>
-  				  EOF;
+EOF;
    file_put_contents( XSYD_CONFIG_PATH.'/salt.config.php', $_Content);
    unset($_Content,$_Salt);
 }
