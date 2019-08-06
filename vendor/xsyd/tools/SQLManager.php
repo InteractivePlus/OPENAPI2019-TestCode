@@ -95,18 +95,18 @@ class MySql
         if( !empty( func_num_args() ) && is_array( $MySql ) ) {
           //请不要删除isset，此目的是为了提高抗压性，因为array_key_exists效率低下
           $_Mysql = array_filter($MySql);
-			    $this->$dbaddress = ( isset($_Mysql['MySql_address']) || array_key_exists('MySql_address', $_Mysql) ) ? $_Mysql['MySql_address'] : XSYD\Config\$sql['address'];
-			    $this->$dbport =  ( isset($_Mysql['MySql_port']) || array_key_exists('MySql_port', $_Mysql) ) ? $_Mysql['MySql_port'] : XSYD\Config\$sql['port'];
-			    $this->$dbbase =  ( isset($_Mysql['MySql_Database']) || array_key_exists('MySql_Database', $_Mysql) ) ? $_Mysql['MySql_Database'] : XSYD\Config\$sql['database'];
-			    $this->$dbuser =  ( isset($_Mysql['MySql_User']) || array_key_exists('MySql_User', $_Mysql) ) ? $_Mysql['MySql_User'] : XSYD\Config\$sql['user'];
-			    $this->$dbpass =  ( isset($_Mysql['MySql_Password']) || array_key_exists('MySql_Password', $_Mysql) ) ? $_Mysql['MySql_Password'] : XSYD\Config\$sql['password'];
+			    $this->$dbaddress = ( isset($_Mysql['MySql_address']) || array_key_exists('MySql_address', $_Mysql) ) ? $_Mysql['MySql_address'] : XSYD_DB_ADDR;
+			    $this->$dbport =  ( isset($_Mysql['MySql_port']) || array_key_exists('MySql_port', $_Mysql) ) ? $_Mysql['MySql_port'] : XSYD_DB_PORT;
+			    $this->$dbbase =  ( isset($_Mysql['MySql_Database']) || array_key_exists('MySql_Database', $_Mysql) ) ? $_Mysql['MySql_Database'] : XSYD_DB_BASE;
+			    $this->$dbuser =  ( isset($_Mysql['MySql_User']) || array_key_exists('MySql_User', $_Mysql) ) ? $_Mysql['MySql_User'] : XSYD_DB_USER;
+			    $this->$dbpass =  ( isset($_Mysql['MySql_Password']) || array_key_exists('MySql_Password', $_Mysql) ) ? $_Mysql['MySql_Password'] : XSYD_DB_PASSWORD;
 			    $this->$dbconn = $this->_XSYDMySQLConnetor();
         }else{
-			    $this->$dbaddress = XSYD\Config\$sql['address'];
-          $this->$dbport = XSYD\Config\$sql['port'];
-          $this->$dbbase = XSYD\Config\$sql['database'];
-          $this->$dbpass = XSYD\Config\$sql['password'];
-          $this->$dbuser = XSYD\Config\$sql['user'];
+			    $this->$dbaddress = XSYD_DB_ADDR;
+          $this->$dbport = XSYD_DB_PORT;
+          $this->$dbbase = XSYD_DB_BASE;
+          $this->$dbpass = XSYD_DB_PASSWORD;
+          $this->$dbuser = XSYD_DB_USER;
           $this->$dbconn = $this->_XSYDMySQLConnetor();
 		    }
       }

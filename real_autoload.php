@@ -15,14 +15,15 @@
 **/
 
 require_once __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/config/general.config.php';
 
-if ( !file_exists( XSYD\Config\$config['dir'].'/salt.config.php') ){
+if ( !file_exists( XSYD_CONFIG_PATH.'/salt.config.php') ){
    $_Content = '<?php 
    '.file_get_contents('https://api.wordpress.org/secret-key/1.1/salt/');
-   file_put_contents( XSYD\Config\$config['dir'].'/salt.config.php', $_Content);
+   file_put_contents( XSYD_CONFIG_PATH.'/salt.config.php', $_Content);
    unset($_Content);
 }
 
-foreach ( XSYD\Config\$config['files'] as  $_IncludeConfigFiles ) {
-	require XSYD\Config\$config['dir']."/$_IncludeConfigFiles";
+foreach ( $_Files as  $_IncludeConfigFiles ) {
+	require XSYD_CONFIG_PATH."/$_IncludeConfigFiles";
 }
