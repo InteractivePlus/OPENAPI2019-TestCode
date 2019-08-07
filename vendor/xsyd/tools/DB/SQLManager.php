@@ -1,6 +1,7 @@
 <?php
 
 namespace XSYD\DB;
+use Mysqli;
 
 
 
@@ -115,7 +116,7 @@ class MySql
 	public function _XSYDMySQLConnetor(){
      //Please Attention!
 	   //The return of mysqli will be a class object!
-      $_mysqli = new mysqli($this->$dbaddress,$this->$dbuser,$this->$dbpass,$this->$dbbase);
+      $_mysqli = new Mysqli($this->$dbaddress,$this->$dbuser,$this->$dbpass,$this->$dbbase);
       if ( mysqli_connect_errno() ) return mysqli_connect_errno();
       $this->$is_connected = true;
       $this->_XSYDInitCharset();
