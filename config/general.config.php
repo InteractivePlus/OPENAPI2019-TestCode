@@ -22,7 +22,7 @@
                          'charset'=>'utf8'
                          );*/
 
-	 define('XSYD_DB_ADDR', 'localhost');
+	 define('XSYD_DB_ADDR', "localhost");
 	 define('XSYD_DB_BASE','xsyd');
 	 define('XSYD_DB_PORT', '3306');
 	 define('XSYD_DB_PASSWORD', 'zhang789');
