@@ -268,7 +268,7 @@ class MySql
     	    if( ( !isset($content[$i]['escaped']) || !array_key_exists('escaped', $content[$i]) ) || true === $content[$i]['escaped'] )
             {
               $content[$i]['content']	=  $this->_real_escape( $content[$i]['content'] );
-              if( isset($content[$i]['escaped']) || array_key_exists('escaped', $content[$i]) ) ) unset($content[$i]['escaped']);
+              if( isset($content[$i]['escaped']) || array_key_exists('escaped', $content[$i]) ) unset($content[$i]['escaped']);
             }
              array_push($_Array, $content[$i]['content']);
     	   }else{
