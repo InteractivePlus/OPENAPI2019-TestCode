@@ -1,7 +1,8 @@
 <?php
 require 'real_autoload.php';
 
-var_dump(\XSYD\Password\SecureRandom::GenSalt());
+$SQL = new \XSYD\DB\MySql();
+$SQL->SQLInsert('test','testcol','wdnmd');
 
 
 ?>
