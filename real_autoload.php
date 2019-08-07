@@ -18,10 +18,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/general.config.php';
 
 if ( !file_exists( XSYD_CONFIG_PATH.'/salt.config.php') ){
-   $_Salt = '''.\XSYD\Password\SecureRandom::GenSalt().''';
+   $_Salt = \XSYD\Password\SecureRandom::GenSalt();
    $_Content = <<<EOF
 				<?php
-				define('AUTH_SALT',$_Salt);
+				define('AUTH_SALT','$_Salt');
 				?>
 EOF;
    file_put_contents( XSYD_CONFIG_PATH.'/salt.config.php', $_Content);
