@@ -17,5 +17,10 @@ define('XSYD_SMTP_AUTH', true);
 define('XSYD_SMTP_SECURE', 'ssl');
 define('XSYD_SMTP_PORT', '443')
 
+/**
+* @version 0.1
+* 邮件模板部分
+*/
+
 
 ?>

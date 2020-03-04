@@ -2,7 +2,8 @@
 namespace XSYD\Password;
 
 /**
-* @version 0.1
+* MySQL Manager Rewrited by LiuXing
+* @version 0.2
 * @author GHL(LiuXing)
 * @uses XSYD\Password\SecureRandom::GenSalt();
 */
@@ -11,13 +12,14 @@ class SecureRandom
 	
 	public static function R($bytes=8)
 	{
-		if( function_exists('openssl_random_pseudo_bytes') ){
-			return openssl_random_pseudo_bytes($bytes);
-		}elseif ( function_exists('random_bytes') ) {
+		if ( function_exists('random_bytes') ) {
 			return random_bytes($bytes);
+		}elseif( function_exists('openssl_random_pseudo_bytes') ){
+			return openssl_random_pseudo_bytes($bytes);
 		}else{
 			return self::OldSecureRandom($bytes);
 		}
+
 	}
 
 	public static function EasyStringRandom($bytes=8)
